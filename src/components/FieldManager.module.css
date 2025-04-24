@@ -1,0 +1,106 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 16px;
+    background-color: #fff;
+}
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.cardText {
+    font-size: 14px;
+    color: #555;
+    margin: 2px 0;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+button {
+    padding: 6px 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #aaa;
+    background-color: white;
+}
+
+button:hover {
+    background-color: #f0f0f0;
+}
+
+.form {
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 6px;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
+
+.select {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
+
+.map {
+    height: 200px;
+    border: 1px dashed #888;
+    background-color: #eee;
+    position: relative;
+    cursor: crosshair;
+}
+
+.point {
+    width: 6px;
+    height: 6px;
+    background-color: blue;
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 10px;
+}
