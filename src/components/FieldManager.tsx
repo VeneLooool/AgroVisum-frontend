@@ -6,31 +6,19 @@ import "leaflet/dist/leaflet.css"
 import { getFields, deleteField, Field } from "@/services/fieldsApi"
 
 
-type Field = {
-    name: string
-    crop: string
-    coordinates: [number, number][]
-    metrics: {
-        moisture: string
-        temperature: string
-    }
-}
-
 export default function FieldManager() {
     const [fields, setFields] = useState<Field[]>([])
 
     useEffect(() => {
-        const stored = localStorage.getItem("fields")
-        if (stored) {
-            setFields(JSON.parse(stored))
-        }
+        getFields().then(setFields)
     }, [])
 
-    const handleDelete = (nameToDelete: string) => {
-        const updated = fields.filter(f => f.name !== nameToDelete)
-        setFields(updated)
-        localStorage.setItem("fields", JSON.stringify(updated))
+
+    const handleDelete = async (id: string) => {
+        await deleteField(id)
+        setFields((prev) => prev.filter(f => f.id !== id))
     }
+
 
     return (
         <div style={{ maxWidth: "960px", margin: "0 auto", padding: "2rem" }}>
@@ -54,9 +42,9 @@ export default function FieldManager() {
                     gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
                     gap: "1.5rem"
                 }}>
-                    {fields.map((f, i) => (
+                    {fields.map((f) => (
                         <div
-                            key={i}
+                            key={f.id}
                             style={{
                                 border: "1px solid #ddd",
                                 borderRadius: "8px",
@@ -66,14 +54,12 @@ export default function FieldManager() {
                             }}
                         >
                             <h3 style={{ marginBottom: "0.5rem" }}>{f.name}</h3>
-                            <p style={{ margin: 0, fontSize: "14px" }}>Культура: {f.crop}</p>
+                            <p style={{ margin: 0, fontSize: "14px" }}>Культура: {f.culture}</p>
                             <p style={{ margin: 0, fontSize: "14px" }}>Точек: {f.coordinates.length}</p>
-                            <p style={{ margin: 0, fontSize: "14px" }}>
-                                Влажность: {f.metrics.moisture}, Температура: {f.metrics.temperature}
-                            </p>
+
                             <div style={{ height: "100px", marginTop: "1rem", borderRadius: "6px", overflow: "hidden" }}>
                                 <MapContainer
-                                    center={f.coordinates[0]}
+                                    center={[f.coordinates[0].latitude, f.coordinates[0].longitude]}
                                     zoom={16}
                                     style={{ height: "100%", width: "100%" }}
                                     dragging={false}
@@ -85,22 +71,23 @@ export default function FieldManager() {
                                     boxZoom={false}
                                     keyboard={false}
                                 >
-                                    <TileLayer
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                    <Polygon
+                                        positions={f.coordinates.map(c => [c.latitude, c.longitude] as [number, number])}
+                                        pathOptions={{ color: "#2a82da" }}
                                     />
-                                    <Polygon positions={f.coordinates} pathOptions={{ color: "#2a82da" }} />
                                 </MapContainer>
                             </div>
 
                             <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
-                                <Link to={`/fields/${encodeURIComponent(f.name)}`}>
-                                    <button style={{ fontSize: "14px" }}>👁 Посмотреть</button>
+                                <Link to={`/fields/${f.id}`}>
+                                    <button style={{ fontSize: "14px" }}>Посмотреть</button>
                                 </Link>
                                 <button
                                     style={{ fontSize: "14px", background: "#ffdede", color: "#a00" }}
-                                    onClick={() => handleDelete(f.name)}
+                                    onClick={() => handleDelete(f.id)}
                                 >
-                                    ❌ Удалить
+                                    Удалить
                                 </button>
                             </div>
                         </div>

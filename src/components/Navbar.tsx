@@ -7,6 +7,7 @@ export default function Navbar() {
             <NavLink to="/">Главная</NavLink>
             <NavLink to="/fields">Поля</NavLink>
             <NavLink to="/drones">Дроны</NavLink>
+            <NavLink to="/missions">Миссии</NavLink>
         </nav>
     )
 }

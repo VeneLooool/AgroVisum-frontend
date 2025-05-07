@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { MapContainer, TileLayer, Polygon, useMapEvents } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
+import { createField, Coordinate } from "@/services/fieldsApi"
 
 export default function FieldEditor() {
     const [points, setPoints] = useState<[number, number][]>([])
@@ -10,19 +11,21 @@ export default function FieldEditor() {
     const [crop, setCrop] = useState("")
     const navigate = useNavigate()
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!name || !crop || points.length < 3) return
-        const newField = {
-            name,
-            crop,
-            coordinates: points,
-            metrics: { moisture: "—", temperature: "—" },
+
+        const coordinates: Coordinate[] = points.map(([lat, lng]) => ({
+            latitude: lat,
+            longitude: lng,
+        }))
+
+        try {
+            await createField(name, crop, coordinates)
+            navigate("/fields")
+        } catch (error) {
+            console.error("Ошибка при создании поля:", error)
+            alert("Не удалось создать поле")
         }
-        const stored = localStorage.getItem("fields")
-        const fields = stored ? JSON.parse(stored) : []
-        fields.push(newField)
-        localStorage.setItem("fields", JSON.stringify(fields))
-        navigate("/fields")
     }
 
     function MapClickHandler() {
@@ -95,7 +98,7 @@ export default function FieldEditor() {
             {/* 👇 Кнопка */}
             <div style={{ marginTop: "1rem" }}>
                 <button onClick={handleSave} disabled={!name || !crop || points.length < 3}>
-                    ✅ Сохранить поле
+                    Сохранить поле
                 </button>
             </div>
         </div>
